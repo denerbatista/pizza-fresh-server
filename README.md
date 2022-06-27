@@ -7,6 +7,10 @@
 
 Application that automates the ordering process of a pizzeria.
 
+## Swagger docs
+
+https://pizza-fresh-server.onrender.com/api
+
 ## Clone repository
 
 ```bash
