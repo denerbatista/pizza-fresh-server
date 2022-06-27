@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTableDto } from './dto/create-table.dto';
 import { Table } from './entities/table.entity';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class TableService {
@@ -11,7 +12,7 @@ export class TableService {
   }
 
   create(createTableDto: CreateTableDto) {
-    const table: Table = { id: 'random_id', ...createTableDto };
+    const table: Table = { id: uuidv4(), ...createTableDto };
 
     this.tables.push(table);
 
