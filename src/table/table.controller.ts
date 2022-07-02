@@ -48,11 +48,11 @@ export class TableController {
   @ApiOperation({
     summary: 'Criar uma mesa',
   })
-  create(@Body() dto: CreateTableDto): Promise<Table> {
+  create(@Body() dto: CreateTableDto): Promise<Table | void> {
     return this.tableService.create(dto);
   }
 
-  @Delete(':id')
+  @Delete('delete/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({
     summary: 'Remover uma mesa pelo ID',
