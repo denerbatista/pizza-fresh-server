@@ -58,6 +58,6 @@ export class TableController {
     summary: 'Remover uma mesa pelo ID',
   })
   delete(@Param('id') id: string) {
-    this.tableService.delete(id);
+    return this.tableService.delete(id);
   }
 }

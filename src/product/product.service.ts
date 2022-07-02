@@ -1,26 +1,60 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { Product } from './entities/product.entity';
 
 @Injectable()
 export class ProductService {
-  create(createProductDto: CreateProductDto) {
-    return 'This action adds a new product';
+  constructor(private readonly prisma: PrismaService) {}
+
+  handleError(error: Error) {
+    console.log(error.message);
+    throw new UnprocessableEntityException(error.message);
   }
 
-  findAll() {
-    return `This action returns all product`;
+  async findById(id: string): Promise<Product> {
+    const record: Product = await this.prisma.product.findUnique({
+      where: { id },
+    });
+    if (!record) {
+      throw new NotFoundException(`Entrada de id: '${id}' não encontrada`);
+    }
+    return record;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  findAll(): Promise<Product[]> {
+    return this.prisma.product.findMany();
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async findOne(id: string): Promise<Product> {
+    return this.findById(id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  create(dto: CreateProductDto): Promise<Product | void> {
+    const data: Product = { ...dto };
+    return this.prisma.product.create({ data }).catch(this.handleError);
+  }
+
+  async update(id: string, dto: UpdateProductDto): Promise<Product> {
+    const record = await this.findById(id);
+    try {
+      const data: Partial<Product> = { ...dto };
+      return this.prisma.product.update({
+        where: { id },
+        data,
+      });
+    } catch (error) {
+      throw new NotFoundException(record);
+    }
+  }
+
+  async delete(id: string) {
+    await this.findById(id);
+    return await this.prisma.product.delete({ where: { id } });
   }
 }
