@@ -87,7 +87,7 @@ export class UserService {
 
   async delete(id: string) {
     await this.findById(id);
-    await this.prisma.user.delete({ where: { id } });
+    return await this.prisma.user.delete({ where: { id } });
   }
 
   handleError(error: Error): undefined {

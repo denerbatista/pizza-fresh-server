@@ -49,6 +49,6 @@ export class TableService {
 
   async delete(id: string) {
     await this.findById(id);
-    await this.prisma.table.delete({ where: { id } });
+    return await this.prisma.table.delete({ where: { id } });
   }
 }
