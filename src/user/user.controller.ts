@@ -19,15 +19,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post()
-  @ApiOperation({
-    summary: 'Criar um usuário',
-  })
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
-  }
-
-  @Get()
+  @Get('find-all')
   @ApiOperation({
     summary: 'Listar todos os usuários',
   })
@@ -35,7 +27,7 @@ export class UserController {
     return this.userService.findAll();
   }
 
-  @Get(':id')
+  @Get('find-one/:id')
   @ApiOperation({
     summary: 'Visualizar um usuário pelo ID',
   })
@@ -43,7 +35,7 @@ export class UserController {
     return this.userService.findOne(id);
   }
 
-  @Patch(':id')
+  @Patch('edit/:id')
   @ApiOperation({
     summary: 'Editar um usuário pelo ID',
   })
@@ -51,7 +43,15 @@ export class UserController {
     return this.userService.update(id, updateUserDto);
   }
 
-  @Delete(':id')
+  @Post('create')
+  @ApiOperation({
+    summary: 'Criar um usuário',
+  })
+  create(@Body() createUserDto: CreateUserDto) {
+    return this.userService.create(createUserDto);
+  }
+
+  @Delete('delete/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({
     summary: 'Remover um usuário pelo ID',
