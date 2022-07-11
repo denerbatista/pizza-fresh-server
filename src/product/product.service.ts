@@ -1,9 +1,6 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { handleError } from 'src/utils/handle-error.util';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
@@ -12,49 +9,46 @@ import { Product } from './entities/product.entity';
 export class ProductService {
   constructor(private readonly prisma: PrismaService) {}
 
-  handleError(error: Error) {
-    console.log(error.message);
-    throw new UnprocessableEntityException(error.message);
+  findAll(): Promise<Product[]> {
+    return this.prisma.product.findMany();
   }
 
   async findById(id: string): Promise<Product> {
-    const record: Product = await this.prisma.product.findUnique({
-      where: { id },
-    });
-    if (!record) {
-      throw new NotFoundException(`Entrada de id: '${id}' não encontrada`);
-    }
-    return record;
-  }
+    const record = await this.prisma.product.findUnique({ where: { id } });
 
-  findAll(): Promise<Product[]> {
-    return this.prisma.product.findMany();
+    if (!record) {
+      throw new NotFoundException(`Registro com o ID '${id}' não encontrado.`);
+    }
+
+    return record;
   }
 
   async findOne(id: string): Promise<Product> {
     return this.findById(id);
   }
 
-  create(dto: CreateProductDto): Promise<Product | void> {
+  create(dto: CreateProductDto): Promise<Product> {
     const data: Product = { ...dto };
-    return this.prisma.product.create({ data }).catch(this.handleError);
+
+    return this.prisma.product.create({ data }).catch(handleError);
   }
 
   async update(id: string, dto: UpdateProductDto): Promise<Product> {
-    const record = await this.findById(id);
-    try {
-      const data: Partial<Product> = { ...dto };
-      return this.prisma.product.update({
+    await this.findById(id);
+
+    const data: Partial<Product> = { ...dto };
+
+    return this.prisma.product
+      .update({
         where: { id },
         data,
-      });
-    } catch (error) {
-      throw new NotFoundException(record);
-    }
+      })
+      .catch(handleError);
   }
 
   async delete(id: string) {
     await this.findById(id);
-    return await this.prisma.product.delete({ where: { id } });
+
+    await this.prisma.product.delete({ where: { id } });
   }
 }
