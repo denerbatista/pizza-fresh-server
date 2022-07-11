@@ -17,7 +17,8 @@ async function bootstrap() {
     .addTag('status')
     .addTag('table')
     .addTag('product')
-    .addTag('user') // < NOVA TAG
+    .addTag('user')
+    .addTag('order')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
