@@ -9,7 +9,7 @@ Application that automates the ordering process of a pizzeria.
 
 ## Swagger docs
 
-https://pizza-fresh-server.up.railway.app/api
+https://pizza-fresh-server-production-dd0e.up.railway.app/api
 
 ## Clone repository
 
